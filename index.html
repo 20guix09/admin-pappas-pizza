@@ -472,17 +472,18 @@
             areaPrint.innerHTML = conteudoImpressao;
             areaPrint.classList.remove('hidden');
             
-            window.print();
-            
-            areaPrint.classList.add('hidden');
+            // CORREÇÃO PARA CELULARES: Atrasos estratégicos (setTimeout)
+            // Dá 100 milissegundos para o HTML aparecer na tela antes de chamar a impressão
+            setTimeout(() => {
+                window.print();
+                
+                // Dá 1 segundo (1000ms) para a tela de impressão do celular ler os dados 
+                // antes de escondermos a div novamente.
+                setTimeout(() => {
+                    areaPrint.classList.add('hidden');
+                }, 1000);
+            }, 100);
         }
-
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'pappas_pedidos') {
-                carregarPedidos();
-            }
-        });
-
         // ==========================================
         // 4. INICIALIZAÇÃO E DADOS DE TESTE (MOCK)
         // ==========================================
