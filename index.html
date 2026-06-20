@@ -52,15 +52,22 @@
         }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="flex h-screen overflow-hidden relative">
+
+    <!-- Overlay escuro para mobile (quando o menu está aberto) -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden transition-opacity" onclick="toggleMenu()"></div>
 
     <!-- Sidebar / Menu Lateral -->
-    <aside class="w-64 bg-sidebar text-white flex flex-col hidden md:flex">
-        <div class="p-6 border-b border-gray-700">
-            <h1 class="text-xl font-bold tracking-wide italic">Pappa's PDV</h1>
-            <p class="text-xs text-statusgreen mt-1">● Online & Sincronizado</p>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-sidebar text-white flex flex-col transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0">
+        <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold tracking-wide italic">Pappa's PDV</h1>
+                <p class="text-xs text-statusgreen mt-1">● Online & Sincronizado</p>
+            </div>
+            <!-- Botão de fechar só visível no mobile -->
+            <button onclick="toggleMenu()" class="md:hidden text-gray-400 hover:text-white text-2xl font-bold focus:outline-none">&times;</button>
         </div>
-        <nav class="flex-1 p-4 space-y-2">
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
             <!-- Botões com lógica de abas no onclick -->
             <a href="#" onclick="showTab('pedidos', 'Gestão de Pedidos em Tempo Real')" id="nav-pedidos" class="nav-item block p-3 rounded bg-gray-800 border-l-4 border-statusgreen text-white transition">
                 📦 Pedidos Online
@@ -78,13 +85,19 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+    <main class="flex-1 flex flex-col h-full w-full relative overflow-hidden">
         
         <!-- Header Superior -->
         <header class="bg-card shadow-sm p-4 flex justify-between items-center border-b border-bordercolor">
-            <h2 class="text-xl font-bold text-textmain" id="header-title">Gestão de Pedidos em Tempo Real</h2>
-            <div class="flex items-center gap-4">
-                <span class="text-sm font-semibold text-gray-500">Olá, Léo</span>
+            <div class="flex items-center gap-3">
+                <!-- Botão Hambúrguer para Mobile -->
+                <button onclick="toggleMenu()" class="md:hidden text-2xl text-textmain focus:outline-none p-1 rounded hover:bg-gray-100 transition">
+                    ☰
+                </button>
+                <h2 class="text-lg md:text-xl font-bold text-textmain truncate w-[180px] sm:w-auto" id="header-title">Gestão de Pedidos em Tempo Real</h2>
+            </div>
+            <div class="flex items-center gap-2 md:gap-4 shrink-0">
+                <span class="text-sm font-semibold text-gray-500 hidden sm:inline">Olá, Léo</span>
                 <div class="w-8 h-8 rounded-full bg-sidebar flex items-center justify-center text-white font-bold shadow">
                     L
                 </div>
@@ -92,7 +105,7 @@
         </header>
 
         <!-- Área de Conteúdo (Rolável) -->
-        <div class="p-6 flex-1 overflow-y-auto">
+        <div class="p-4 md:p-6 flex-1 overflow-y-auto w-full">
             
             <!-- ==========================================
                  ABA 1: PEDIDOS 
@@ -110,10 +123,10 @@
                         <input type="text" id="man-nome" placeholder="Nome do Cliente" class="w-full p-2 border rounded focus:outline-none focus:border-sidebar" required>
                         <input type="text" id="man-desc" placeholder="Ex: 1x Marguerita, 1x Refri" class="w-full p-2 border rounded focus:outline-none focus:border-sidebar" required>
                         <div class="flex gap-2">
-                            <span class="bg-gray-100 border p-2 rounded text-gray-500 font-bold">R$</span>
+                            <span class="bg-gray-100 border p-2 rounded text-gray-500 font-bold flex items-center justify-center min-w-[40px]">R$</span>
                             <input type="number" id="man-valor" placeholder="Valor Total" class="w-full p-2 border rounded focus:outline-none focus:border-sidebar" step="0.01" required>
                         </div>
-                        <button type="submit" class="w-full bg-sidebar text-white py-2 rounded shadow hover:bg-gray-800 transition font-bold">Lançar Pedido</button>
+                        <button type="submit" class="w-full bg-sidebar text-white py-2 rounded shadow hover:bg-gray-800 transition font-bold mt-2">Lançar Pedido</button>
                     </form>
                 </section>
             </div>
@@ -123,66 +136,66 @@
             =========================================== -->
             <div id="sec-relatorios" class="tab-content hidden">
                 <!-- Top Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <div class="bg-card p-5 rounded-lg border border-bordercolor shadow-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
+                    <div class="bg-card p-4 md:p-5 rounded-lg border border-bordercolor shadow-sm">
                         <h4 class="text-sm text-gray-500 mb-1">Faturamento Hoje</h4>
-                        <span class="text-2xl font-bold text-textmain">R$ 1.420,00</span>
+                        <span class="text-xl md:text-2xl font-bold text-textmain">R$ 1.420,00</span>
                         <span class="text-xs text-statusgreen font-bold block mt-2">↑ +12% vs ontem</span>
                     </div>
-                    <div class="bg-card p-5 rounded-lg border border-bordercolor shadow-sm">
+                    <div class="bg-card p-4 md:p-5 rounded-lg border border-bordercolor shadow-sm">
                         <h4 class="text-sm text-gray-500 mb-1">Total da Semana</h4>
-                        <span class="text-2xl font-bold text-textmain">R$ 8.340,00</span>
+                        <span class="text-xl md:text-2xl font-bold text-textmain">R$ 8.340,00</span>
                     </div>
-                    <div class="bg-card p-5 rounded-lg border border-bordercolor shadow-sm">
+                    <div class="bg-card p-4 md:p-5 rounded-lg border border-bordercolor shadow-sm">
                         <h4 class="text-sm text-gray-500 mb-1">Ticket Médio</h4>
-                        <span class="text-2xl font-bold text-textmain">R$ 68,50</span>
+                        <span class="text-xl md:text-2xl font-bold text-textmain">R$ 68,50</span>
                     </div>
                     <!-- Card de Economia Destacado -->
-                    <div class="bg-card p-5 rounded-lg border border-statusgreen bg-green-50 shadow-sm relative overflow-hidden">
+                    <div class="bg-card p-4 md:p-5 rounded-lg border border-statusgreen bg-green-50 shadow-sm relative overflow-hidden">
                         <div class="absolute -right-4 -top-4 text-green-200 opacity-50 text-6xl">💰</div>
                         <h4 class="text-sm text-statusgreen font-bold mb-1 relative z-10">Economia s/ Taxas (27%)</h4>
-                        <span class="text-2xl font-bold text-statusgreen relative z-10">R$ 2.251,80</span>
+                        <span class="text-xl md:text-2xl font-bold text-statusgreen relative z-10">R$ 2.251,80</span>
                         <span class="text-xs text-gray-600 block mt-2 relative z-10">Poupado do iFood este mês</span>
                     </div>
                 </div>
 
                 <!-- Gráficos e Tabelas Menores -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                     <!-- Top 3 Sabores -->
-                    <div class="bg-card p-5 rounded-lg border border-bordercolor shadow-sm">
+                    <div class="bg-card p-4 md:p-5 rounded-lg border border-bordercolor shadow-sm overflow-x-auto">
                         <h3 class="font-bold text-lg mb-4 border-b pb-2">Top 3 Sabores Mais Vendidos</h3>
-                        <ul class="space-y-4">
+                        <ul class="space-y-3 min-w-[300px]">
                             <li class="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-100">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl font-bold text-statusyellow">1º</span>
-                                    <span class="font-semibold text-textmain">Calabresa Especial</span>
+                                    <span class="font-semibold text-textmain text-sm sm:text-base">Calabresa Especial</span>
                                 </div>
-                                <span class="text-sm font-bold bg-white border border-gray-200 px-3 py-1 rounded-full shadow-sm text-statusgreen">142 un</span>
+                                <span class="text-xs sm:text-sm font-bold bg-white border border-gray-200 px-2 py-1 rounded-full shadow-sm text-statusgreen whitespace-nowrap">142 un</span>
                             </li>
                             <li class="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-100">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl font-bold text-gray-400">2º</span>
-                                    <span class="font-semibold text-textmain">Frango com Catupiry</span>
+                                    <span class="font-semibold text-textmain text-sm sm:text-base">Frango com Catupiry</span>
                                 </div>
-                                <span class="text-sm font-bold bg-white border border-gray-200 px-3 py-1 rounded-full shadow-sm">98 un</span>
+                                <span class="text-xs sm:text-sm font-bold bg-white border border-gray-200 px-2 py-1 rounded-full shadow-sm whitespace-nowrap">98 un</span>
                             </li>
                             <li class="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-100">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xl font-bold text-orange-400">3º</span>
-                                    <span class="font-semibold text-textmain">Marguerita Artesanal</span>
+                                    <span class="font-semibold text-textmain text-sm sm:text-base">Marguerita Artesanal</span>
                                 </div>
-                                <span class="text-sm font-bold bg-white border border-gray-200 px-3 py-1 rounded-full shadow-sm">76 un</span>
+                                <span class="text-xs sm:text-sm font-bold bg-white border border-gray-200 px-2 py-1 rounded-full shadow-sm whitespace-nowrap">76 un</span>
                             </li>
                         </ul>
                     </div>
 
                     <!-- Gráfico Mensal Fake -->
-                    <div class="bg-card p-5 rounded-lg border border-bordercolor shadow-sm flex flex-col justify-center items-center text-center">
+                    <div class="bg-card p-4 md:p-5 rounded-lg border border-bordercolor shadow-sm flex flex-col justify-center items-center text-center">
                         <h3 class="font-bold text-lg mb-4 border-b w-full text-left pb-2">Desempenho do Mês</h3>
-                        <div class="flex-1 flex items-center justify-center flex-col">
-                            <span class="text-5xl">📈</span>
-                            <p class="text-gray-500 mt-4 text-sm max-w-xs">Seu faturamento está crescendo organicamente através do site próprio!</p>
-                            <p class="mt-4 font-bold text-xl text-textmain bg-gray-100 px-4 py-2 rounded-full border">Total: R$ 28.450,00</p>
+                        <div class="flex-1 flex items-center justify-center flex-col py-6">
+                            <span class="text-5xl mb-2">📈</span>
+                            <p class="text-gray-500 mt-2 text-sm max-w-xs">Seu faturamento está crescendo organicamente através do site próprio!</p>
+                            <p class="mt-4 font-bold text-lg sm:text-xl text-textmain bg-gray-100 px-4 py-2 rounded-full border">Total: R$ 28.450,00</p>
                         </div>
                     </div>
                 </div>
@@ -192,24 +205,24 @@
                  ABA 3: CARDÁPIO 
             =========================================== -->
             <div id="sec-cardapio" class="tab-content hidden">
-                <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <p class="text-gray-600 text-sm max-w-xl">
                         Altere os preços ou desative produtos que esgotaram. A mudança reflete <strong class="text-statusgreen">instantaneamente</strong> no site do cliente.
                     </p>
-                    <button class="bg-sidebar text-white px-5 py-2 rounded text-sm font-bold shadow hover:bg-gray-800 transition">
+                    <button class="w-full sm:w-auto bg-sidebar text-white px-5 py-2 rounded text-sm font-bold shadow hover:bg-gray-800 transition">
                         + Novo Produto
                     </button>
                 </div>
                 
-                <div class="bg-card rounded-lg border border-bordercolor shadow-sm overflow-x-auto">
-                    <table class="min-w-full text-left border-collapse">
+                <div class="bg-card rounded-lg border border-bordercolor shadow-sm overflow-x-auto w-full">
+                    <table class="w-full min-w-[700px] text-left border-collapse">
                         <thead>
                             <tr class="bg-canvas border-b border-bordercolor">
-                                <th class="p-4 font-semibold text-sm text-textmain">Produto</th>
-                                <th class="p-4 font-semibold text-sm text-textmain">Categoria</th>
-                                <th class="p-4 font-semibold text-sm text-textmain">Preço (R$)</th>
-                                <th class="p-4 font-semibold text-sm text-textmain">Disponibilidade</th>
-                                <th class="p-4 font-semibold text-sm text-textmain text-center">Ações</th>
+                                <th class="p-3 md:p-4 font-semibold text-sm text-textmain">Produto</th>
+                                <th class="p-3 md:p-4 font-semibold text-sm text-textmain">Categoria</th>
+                                <th class="p-3 md:p-4 font-semibold text-sm text-textmain">Preço (R$)</th>
+                                <th class="p-3 md:p-4 font-semibold text-sm text-textmain">Disponibilidade</th>
+                                <th class="p-3 md:p-4 font-semibold text-sm text-textmain text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="lista-cardapio">
@@ -227,6 +240,23 @@
 
     <script>
         // ==========================================
+        // LÓGICA DO MENU MOBILE
+        // ==========================================
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            
+            // Checa se a barra lateral está oculta (traduzida para fora da tela)
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full'); // Mostra a sidebar
+                overlay.classList.remove('hidden'); // Mostra o fundo escuro
+            } else {
+                sidebar.classList.add('-translate-x-full'); // Esconde a sidebar
+                overlay.classList.add('hidden'); // Esconde o fundo escuro
+            }
+        }
+
+        // ==========================================
         // 1. LÓGICA DE NAVEGAÇÃO ENTRE ABAS
         // ==========================================
         function showTab(tabId, title) {
@@ -243,8 +273,18 @@
             document.getElementById('header-title').innerText = title;
             
             const activeNav = document.getElementById('nav-' + tabId);
-            activeNav.classList.remove('text-gray-400', 'border-transparent');
-            activeNav.classList.add('bg-gray-800', 'border-statusgreen', 'text-white');
+            if(activeNav) {
+                activeNav.classList.remove('text-gray-400', 'border-transparent');
+                activeNav.classList.add('bg-gray-800', 'border-statusgreen', 'text-white');
+            }
+
+            // Fecha o menu lateral automaticamente em telas de celular ao clicar em uma aba
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleMenu();
+                }
+            }
         }
 
         // ==========================================
@@ -262,23 +302,23 @@
             const tbody = document.getElementById('lista-cardapio');
             tbody.innerHTML = itensCardapio.map(item => `
                 <tr class="border-b border-bordercolor hover:bg-gray-50 transition">
-                    <td class="p-4 font-medium text-textmain">${item.nome}</td>
-                    <td class="p-4 text-sm text-gray-500">${item.cat}</td>
-                    <td class="p-4">
+                    <td class="p-3 md:p-4 font-medium text-textmain text-sm sm:text-base">${item.nome}</td>
+                    <td class="p-3 md:p-4 text-sm text-gray-500">${item.cat}</td>
+                    <td class="p-3 md:p-4">
                         <div class="flex items-center">
                             <span class="text-gray-500 mr-2 text-sm">R$</span>
-                            <input type="number" id="preco-${item.id}" value="${item.preco.toFixed(2)}" class="border border-gray-300 p-1.5 w-24 rounded focus:outline-none focus:border-sidebar bg-white shadow-inner font-semibold" step="0.01">
+                            <input type="number" id="preco-${item.id}" value="${item.preco.toFixed(2)}" class="border border-gray-300 p-1 md:p-1.5 w-20 md:w-24 rounded focus:outline-none focus:border-sidebar bg-white shadow-inner font-semibold text-sm md:text-base" step="0.01">
                         </div>
                     </td>
-                    <td class="p-4">
+                    <td class="p-3 md:p-4">
                         <label class="inline-flex relative items-center cursor-pointer">
                             <input type="checkbox" class="sr-only peer" ${item.ativo ? 'checked' : ''} onchange="alterarStatusItem(${item.id}, this.checked)">
-                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-statusgreen"></div>
-                            <span id="status-text-${item.id}" class="ml-3 text-sm font-bold ${item.ativo ? 'text-statusgreen' : 'text-statusred'}">${item.ativo ? 'Online' : 'Esgotado'}</span>
+                            <div class="w-10 h-5 sm:w-11 sm:h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all peer-checked:bg-statusgreen"></div>
+                            <span id="status-text-${item.id}" class="ml-2 sm:ml-3 text-xs sm:text-sm font-bold ${item.ativo ? 'text-statusgreen' : 'text-statusred'}">${item.ativo ? 'Online' : 'Esgotado'}</span>
                         </label>
                     </td>
-                    <td class="p-4 text-center">
-                        <button onclick="salvarItem(${item.id})" class="text-sm border border-sidebar text-sidebar px-4 py-1.5 rounded shadow-sm hover:bg-sidebar hover:text-white transition font-bold">Salvar Alteração</button>
+                    <td class="p-3 md:p-4 text-center">
+                        <button onclick="salvarItem(${item.id})" class="text-xs sm:text-sm border border-sidebar text-sidebar px-3 py-1 md:px-4 md:py-1.5 rounded shadow-sm hover:bg-sidebar hover:text-white transition font-bold whitespace-nowrap">Salvar</button>
                     </td>
                 </tr>
             `).join('');
@@ -320,30 +360,32 @@
             const pedidosDb = JSON.parse(localStorage.getItem('pappas_pedidos')) || [];
             
             if(pedidosDb.length === 0) {
-                painel.innerHTML = `<div class="p-8 text-center text-gray-500 bg-card rounded border border-bordercolor">Nenhum pedido no momento. Os pedidos do site aparecerão aqui automaticamente.</div>`;
+                painel.innerHTML = `<div class="p-8 text-center text-gray-500 bg-card rounded border border-bordercolor text-sm sm:text-base">Nenhum pedido no momento. Os pedidos do site aparecerão aqui automaticamente.</div>`;
                 return;
             }
 
             painel.innerHTML = pedidosDb.slice().reverse().map(p => `
                 <div class="bg-card p-4 rounded shadow-sm border-l-4 ${corStatus(p.status)} border-bordercolor flex flex-col md:flex-row justify-between gap-4 transition hover:shadow-md">
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="font-bold text-lg">#${p.id}</span>
-                            <span class="text-sm px-2 py-0.5 rounded bg-gray-100 border text-gray-600">${p.data}</span>
-                            <span class="text-xs font-bold px-2 py-0.5 rounded text-white ${bgStatus(p.status)} shadow-sm">${p.status}</span>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="font-bold text-base sm:text-lg">#${p.id}</span>
+                            <span class="text-xs sm:text-sm px-2 py-0.5 rounded bg-gray-100 border text-gray-600">${p.data}</span>
+                            <span class="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded text-white ${bgStatus(p.status)} shadow-sm">${p.status}</span>
                         </div>
-                        <p class="font-semibold text-textmain">${p.nome} - <span class="text-sm text-gray-500">${p.telefone || 'Balcão'}</span></p>
-                        <p class="text-sm mt-1 text-gray-700 bg-gray-50 p-2 border rounded inline-block">
+                        <p class="font-semibold text-textmain text-sm sm:text-base">${p.nome} - <span class="text-xs sm:text-sm text-gray-500">${p.telefone || 'Balcão'}</span></p>
+                        <p class="text-xs sm:text-sm mt-1 text-gray-700 bg-gray-50 p-2 border rounded inline-block">
                             ${p.itens ? p.itens.map(i => i.item).join(', ') : p.descricaoManual}
                         </p>
-                        <p class="text-sm text-gray-500 mt-2 truncate max-w-md">📍 ${p.endereco || 'Retirada no local'}</p>
+                        <p class="text-xs sm:text-sm text-gray-500 mt-2 truncate max-w-[250px] sm:max-w-md">📍 ${p.endereco || 'Retirada no local'}</p>
                     </div>
-                    <div class="flex flex-col justify-between items-end min-w-[150px]">
-                        <span class="font-bold text-2xl text-statusgreen">R$ ${p.total.toFixed(2)}</span>
-                        <p class="text-xs font-bold text-gray-500 mb-2 bg-gray-100 px-2 py-1 rounded">Pagt: ${p.pagamento || 'Dinheiro'}</p>
+                    <div class="flex flex-row md:flex-col justify-between items-center md:items-end w-full md:w-auto md:min-w-[150px] border-t md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0">
+                        <div class="flex flex-col md:items-end">
+                            <span class="font-bold text-xl sm:text-2xl text-statusgreen">R$ ${p.total.toFixed(2)}</span>
+                            <p class="text-[10px] sm:text-xs font-bold text-gray-500 mb-2 bg-gray-100 px-2 py-1 rounded w-fit">Pagt: ${p.pagamento || 'Dinheiro'}</p>
+                        </div>
                         <div class="flex gap-2">
-                            <button onclick="atualizarStatus('${p.id}', 'No Forno')" class="text-xs bg-statusyellow text-white font-bold px-3 py-1.5 rounded shadow hover:bg-orange-500">Forno</button>
-                            <button onclick="imprimirComanda('${p.id}')" class="text-xs bg-sidebar text-white font-bold px-3 py-1.5 rounded shadow flex items-center gap-1 hover:bg-gray-800">
+                            <button onclick="atualizarStatus('${p.id}', 'No Forno')" class="text-[10px] sm:text-xs bg-statusyellow text-white font-bold px-2 sm:px-3 py-1.5 rounded shadow hover:bg-orange-500">Forno</button>
+                            <button onclick="imprimirComanda('${p.id}')" class="text-[10px] sm:text-xs bg-sidebar text-white font-bold px-2 sm:px-3 py-1.5 rounded shadow flex items-center gap-1 hover:bg-gray-800">
                                 🖨️ Imprimir
                             </button>
                         </div>
@@ -441,8 +483,34 @@
             }
         });
 
+        // ==========================================
+        // 4. INICIALIZAÇÃO E DADOS DE TESTE (MOCK)
+        // ==========================================
+        function injetarPedidoDeTeste() {
+            let pedidosDb = JSON.parse(localStorage.getItem('pappas_pedidos'));
+            
+            if (!pedidosDb || pedidosDb.length === 0) {
+                let pedidoSimulado = {
+                    "data": "17:37:24",
+                    "endereco": "Geraldo Gonçalves da costa 85",
+                    "id": "844419",
+                    "itens": [
+                        {"item": "Refrigerante 2L", "preco": 12},
+                        {"item": "Pizza Grande - Calabresa Especial", "preco": 58.5}
+                    ],
+                    "nome": "Gui",
+                    "pagamento": "Cartão na Entrega",
+                    "status": "No Forno",
+                    "telefone": "43988024099",
+                    "total": 70.5
+                };
+                localStorage.setItem('pappas_pedidos', JSON.stringify([pedidoSimulado]));
+            }
+        }
+
         // Inicialização
         window.onload = () => {
+            injetarPedidoDeTeste();
             carregarPedidos();
             renderizarCardapio();
         };
